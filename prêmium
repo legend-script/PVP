@@ -1,0 +1,233 @@
+-- Legend Hub - Lab Brainrot PVP premium | discord.gg/9KHgS8vnWR
+local Pl=game:GetService("Players") local RS=game:GetService("RunService") local TS=game:GetService("TweenService") local LP=Pl.LocalPlayer
+local S={speed=false,noAnim=false,batTp=false,bTgt=nil,walkAir=false,autoBat=false,aTgt=nil,spin=false}
+local sg pcall(function() sg=Instance.new("ScreenGui") sg.Name="LegendHub" sg.ResetOnSpawn=false sg.Parent=game:GetService("CoreGui") end)
+if not sg then sg=Instance.new("ScreenGui") sg.Name="LegendHub" sg.ResetOnSpawn=false sg.Parent=LP:WaitForChild("PlayerGui") end
+
+local function mkF(p,c,sz,pos,r) local f=Instance.new("Frame") f.BackgroundColor3=c f.BorderSizePixel=0 f.Size=sz f.Position=pos f.Parent=p Instance.new("UICorner",f).CornerRadius=UDim.new(0,r or 10) return f end
+local function mkL(p,t,ts,tc,pos,sz,al,fn) local l=Instance.new("TextLabel") l.BackgroundTransparency=1 l.Text=t l.TextSize=ts l.TextColor3=tc l.Position=pos l.Size=sz l.Font=fn or Enum.Font.Gotham l.TextXAlignment=al or Enum.TextXAlignment.Left l.Parent=p return l end
+local function mkInp(p,ph,pos) local b=Instance.new("TextBox") b.Size=UDim2.new(1,-20,0,28) b.Position=pos b.BackgroundColor3=Color3.fromRGB(20,8,42) b.BorderSizePixel=0 b.Text="" b.PlaceholderText=ph b.PlaceholderColor3=Color3.fromRGB(100,60,160) b.TextColor3=Color3.fromRGB(220,185,255) b.TextSize=12 b.Font=Enum.Font.Gotham b.ClearTextOnFocus=false b.Parent=p Instance.new("UICorner",b).CornerRadius=UDim.new(0,8) local s=Instance.new("UIStroke",b) s.Color=Color3.fromRGB(100,40,200) s.Thickness=1 return b end
+
+-- MAIN FRAME
+local M=mkF(sg,Color3.fromRGB(9,4,18),UDim2.new(0,258,0,560),UDim2.new(0.51,0,0.02,0))
+M.Active=true M.Draggable=true
+local msk=Instance.new("UIStroke",M) msk.Color=Color3.fromRGB(130,45,240) msk.Thickness=2
+
+-- top glow bar
+local glow=mkF(M,Color3.fromRGB(140,50,255),UDim2.new(1,0,0,3),UDim2.new(0,0,0,0),0)
+
+-- HEADER
+local hd=mkF(M,Color3.fromRGB(16,5,36),UDim2.new(1,0,0,58),UDim2.new(0,0,0,0),10)
+local badge=mkF(hd,Color3.fromRGB(100,35,200),UDim2.new(0,4,0,32),UDim2.new(0,14,0.5,-16),2)
+local t1=mkL(hd,"Legend Hub",17,Color3.fromRGB(230,180,255),UDim2.new(0,26,0,7),UDim2.new(1,-26,0,24),nil,Enum.Font.GothamBold)
+local t2=mkL(hd,"Lab Brainrot PVP premium | https://discord.gg/YtqYk87gVr",10,Color3.fromRGB(120,75,195),UDim2.new(0,26,0,33),UDim2.new(1,-26,0,16))
+local hdDiv=mkF(hd,Color3.fromRGB(80,28,160),UDim2.new(0.9,0,0,1),UDim2.new(0.05,0,1,-1),0)
+
+-- secao
+local function sec(y,icon,t)
+    local row=mkF(M,Color3.fromRGB(22,8,46),UDim2.new(1,-16,0,22),UDim2.new(0,8,0,y),6)
+    local accent=mkF(row,Color3.fromRGB(140,50,255),UDim2.new(0,3,0.3,0),UDim2.new(0,0,0,0),2)
+    mkL(row," "..t,10,Color3.fromRGB(190,120,255),UDim2.new(0,10,0,0),UDim2.new(1,0,1,0),nil,Enum.Font.GothamBold)
+end
+
+-- toggle
+local function tog(y,label)
+    local row=mkF(M,Color3.fromRGB(14,6,28),UDim2.new(1,-16,0,30),UDim2.new(0,8,0,y),8)
+    local rsk=Instance.new("UIStroke",row) rsk.Color=Color3.fromRGB(45,18,90) rsk.Thickness=1
+    local bg=mkF(row,Color3.fromRGB(38,14,72),UDim2.new(0,44,0,22),UDim2.new(0,8,0.5,-11),20)
+    local ci=mkF(bg,Color3.fromRGB(85,45,160),UDim2.new(0,18,0,18),UDim2.new(0,2,0,2),20)
+    local btn=Instance.new("TextButton") btn.Size=UDim2.new(1,0,1,0) btn.BackgroundTransparency=1 btn.Text="" btn.Parent=bg
+    local lb=mkL(row,label..": OFF",12,Color3.fromRGB(145,105,205),UDim2.new(0,60,0,0),UDim2.new(0,175,1,0))
+    local ind=mkF(row,Color3.fromRGB(50,20,90),UDim2.new(0,7,0,7),UDim2.new(1,-18,0.5,-3.5),20)
+    local function set(v)
+        if v then
+            TS:Create(ci,TweenInfo.new(0.15,Enum.EasingStyle.Quad),{Position=UDim2.new(0,24,0,2),BackgroundColor3=Color3.fromRGB(200,100,255)}):Play()
+            TS:Create(bg,TweenInfo.new(0.15),{BackgroundColor3=Color3.fromRGB(88,34,165)}):Play()
+            TS:Create(ind,TweenInfo.new(0.15),{BackgroundColor3=Color3.fromRGB(180,80,255)}):Play()
+            lb.Text=label..": ON" lb.TextColor3=Color3.fromRGB(210,160,255)
+        else
+            TS:Create(ci,TweenInfo.new(0.15,Enum.EasingStyle.Quad),{Position=UDim2.new(0,2,0,2),BackgroundColor3=Color3.fromRGB(85,45,160)}):Play()
+            TS:Create(bg,TweenInfo.new(0.15),{BackgroundColor3=Color3.fromRGB(38,14,72)}):Play()
+            TS:Create(ind,TweenInfo.new(0.15),{BackgroundColor3=Color3.fromRGB(50,20,90)}):Play()
+            lb.Text=label..": OFF" lb.TextColor3=Color3.fromRGB(145,105,205)
+        end
+    end
+    return btn,set
+end
+
+local function mkSt(y) local l=mkL(M,"",10,Color3.fromRGB(255,80,80),UDim2.new(0,12,0,y),UDim2.new(1,-24,0,18)) return l end
+local function mkDiv(y) local d=mkF(M,Color3.fromRGB(35,12,70),UDim2.new(1,-30,0,1),UDim2.new(0,15,0,y),0) end
+
+-- LAYOUT
+sec(64,"","ANIMATIONS")
+local sBt,sSp=tog(90,"Speed 150")
+local nBt,sNA=tog(124,"No Animations")
+mkDiv(158)
+sec(163,"","WALK IN AIR")
+local wBt,sWA=tog(189,"Walk in Air")
+mkDiv(223)
+sec(228,"","SPIN BOT")
+local spBt,sSB=tog(254,"Spin Bot")
+mkDiv(288)
+sec(293,"","BAT TP")
+local bInp=mkInp(M,"3+ letras do jogador...",UDim2.new(0,8,0,319))
+local bBt,sBT=tog(351,"Bat TP")
+local bSt=mkSt(385)
+mkDiv(406)
+sec(411,"","AUTO BAT")
+local aInp=mkInp(M,"3+ letras do jogador...",UDim2.new(0,8,0,437))
+local aBt,sAB=tog(469,"Auto Bat")
+local aSt=mkSt(503)
+
+-- SPEED
+local spC
+sBt.MouseButton1Click:Connect(function()
+    S.speed=not S.speed sSp(S.speed)
+    if S.speed then
+        if spC then spC:Disconnect() end
+        spC=RS.Heartbeat:Connect(function() local h=LP.Character and LP.Character:FindFirstChildOfClass("Humanoid") if h and S.speed then h.WalkSpeed=150 end end)
+    else
+        local h=LP.Character and LP.Character:FindFirstChildOfClass("Humanoid") if h then h.WalkSpeed=16 end
+        if spC then spC:Disconnect() spC=nil end
+    end
+end)
+
+-- NO ANIM
+local naC
+local function stopA(ch) if not ch then return end local h=ch:FindFirstChildOfClass("Humanoid") local a=h and h:FindFirstChildOfClass("Animator") if not a then return end for _,t in ipairs(a:GetPlayingAnimationTracks()) do pcall(function()t:Stop(0)end) end end
+local function disA(ch) if not ch then return end local s=ch:FindFirstChild("Animate") or ch:FindFirstChild("animate") if s then s.Disabled=true end stopA(ch) end
+local function enA(ch) if not ch then return end local s=ch:FindFirstChild("Animate") or ch:FindFirstChild("animate") if s then s.Disabled=false end end
+nBt.MouseButton1Click:Connect(function()
+    S.noAnim=not S.noAnim sNA(S.noAnim)
+    if S.noAnim then disA(LP.Character) if naC then naC:Disconnect() end naC=RS.Heartbeat:Connect(function() if S.noAnim then stopA(LP.Character) end end)
+    else enA(LP.Character) if naC then naC:Disconnect() naC=nil end end
+end)
+
+-- WALK IN AIR
+local waC local waBP=nil
+wBt.MouseButton1Click:Connect(function()
+    S.walkAir=not S.walkAir sWA(S.walkAir)
+    if S.walkAir then
+        local ch=LP.Character if not ch then return end
+        local hrp=ch:FindFirstChild("HumanoidRootPart") if not hrp then return end
+        local bp=Instance.new("BodyPosition") bp.Name="WalkAirBP" bp.MaxForce=Vector3.new(0,math.huge,0) bp.P=100000 bp.D=2000 bp.Position=hrp.Position bp.Parent=hrp waBP=bp
+        if waC then waC:Disconnect() end
+        waC=RS.Stepped:Connect(function()
+            if not S.walkAir then return end
+            local ch2=LP.Character if not ch2 then return end
+            local hrp2=ch2:FindFirstChild("HumanoidRootPart") if not hrp2 then return end
+            for _,p in ipairs(ch2:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide=false end end
+            local bp2=hrp2:FindFirstChild("WalkAirBP")
+            if bp2 and hrp2.AssemblyLinearVelocity.Y>2 then bp2.Position=hrp2.Position end
+        end)
+    else
+        if waC then waC:Disconnect() waC=nil end
+        if waBP then pcall(function()waBP:Destroy()end) waBP=nil end
+        local ch=LP.Character if not ch then return end
+        for _,p in ipairs(ch:GetDescendants()) do if p:IsA("BasePart") then p.CanCollide=true end end
+    end
+end)
+
+-- SPIN BOT
+local spinC local spinAngle=0
+spBt.MouseButton1Click:Connect(function()
+    S.spin=not S.spin sSB(S.spin)
+    if S.spin then
+        if spinC then spinC:Disconnect() end
+        spinC=RS.Heartbeat:Connect(function(dt)
+            if not S.spin then return end
+            local ch=LP.Character if not ch then return end
+            local hrp=ch:FindFirstChild("HumanoidRootPart") if not hrp then return end
+            spinAngle=spinAngle+(dt*720)
+            hrp.CFrame=CFrame.new(hrp.Position)*CFrame.Angles(0,math.rad(spinAngle),0)
+        end)
+    else
+        if spinC then spinC:Disconnect() spinC=nil end
+    end
+end)
+
+-- TOOL
+local KEYS={"bastao","basto","stick","bat","taco","clube"}
+local function isBat(n) n=string.lower(n) for _,k in ipairs(KEYS) do if string.find(n,k,1,true) then return true end end return false end
+local function getEq()
+    local ch=LP.Character if not ch then return nil end
+    local hum=ch:FindFirstChildOfClass("Humanoid") if not hum then return nil end
+    for _,v in ipairs(ch:GetChildren()) do if v:IsA("Tool") and isBat(v.Name) then return v end end
+    local bp=LP:FindFirstChild("Backpack") if bp then for _,v in ipairs(bp:GetChildren()) do if v:IsA("Tool") and isBat(v.Name) then hum:EquipTool(v) task.wait(0.05) return v end end end
+    for _,v in ipairs(ch:GetChildren()) do if v:IsA("Tool") then return v end end
+    return nil
+end
+local function swing(tool,th)
+    if not tool then return end
+    pcall(function()
+        for _,v in ipairs(tool:GetDescendants()) do if v:IsA("ClickDetector") then fireclickdetector(v) end end
+        local h=tool:FindFirstChild("Handle") if h and th then firetouchinterest(h,th,0) task.wait(0.01) firetouchinterest(h,th,1) end
+        tool:Activate()
+    end)
+end
+
+-- BUSCA
+local function findP(q,lbl)
+    local ns={} for _,p in ipairs(Pl:GetPlayers()) do if p~=LP then table.insert(ns,p.Name) end end
+    if #ns==0 then if lbl then lbl.Text="Sem jogadores" end return nil end
+    q=string.gsub(q,"^%s*(.-)%s*$","%1")
+    if #q<3 then if lbl then lbl.Text="Jogadores: "..table.concat(ns,", ") lbl.TextColor3=Color3.fromRGB(200,200,100) end return nil end
+    local ql=string.lower(q)
+    for _,p in ipairs(Pl:GetPlayers()) do if p~=LP and string.find(string.lower(p.Name),ql,1,true) then return p end end
+    if lbl then lbl.Text="Jogadores: "..table.concat(ns,", ") lbl.TextColor3=Color3.fromRGB(255,180,50) end
+    return nil
+end
+
+-- BAT TP
+local btC
+bBt.MouseButton1Click:Connect(function()
+    if S.batTp then S.batTp=false S.bTgt=nil sBT(false) bSt.Text="" if btC then btC:Disconnect() btC=nil end return end
+    local t=findP(bInp.Text,bSt) if not t then bSt.TextColor3=Color3.fromRGB(255,80,80) return end
+    S.bTgt=t S.batTp=true sBT(true) bSt.Text="Alvo: "..t.Name bSt.TextColor3=Color3.fromRGB(135,255,115)
+    if btC then btC:Disconnect() end
+    btC=RS.Heartbeat:Connect(function()
+        if not S.batTp then return end
+        local tc=S.bTgt and S.bTgt.Character local mc=LP.Character if not tc or not mc then return end
+        local th=tc:FindFirstChild("HumanoidRootPart") local mh=mc:FindFirstChild("HumanoidRootPart") if not th or not mh then return end
+        local safeY=mh.Position.Y
+        local fCF=th.CFrame*CFrame.new(0,0,-1.5)*CFrame.Angles(0,math.pi,0)
+        mh.CFrame=CFrame.new(fCF.Position.X,safeY,fCF.Position.Z)*CFrame.Angles(0,select(2,fCF:ToEulerAnglesYXZ()),0)
+        swing(getEq(),th)
+    end)
+end)
+
+-- AUTO BAT
+local abC
+aBt.MouseButton1Click:Connect(function()
+    if S.autoBat then
+        S.autoBat=false S.aTgt=nil sAB(false) aSt.Text=""
+        if abC then abC:Disconnect() abC=nil end
+        local h=LP.Character and LP.Character:FindFirstChildOfClass("Humanoid") if h then h.WalkSpeed=(S.speed and 150 or 16) end
+        return
+    end
+    local t=findP(aInp.Text,aSt) if not t then aSt.TextColor3=Color3.fromRGB(255,80,80) return end
+    S.aTgt=t S.autoBat=true sAB(true) aSt.Text="Alvo: "..t.Name aSt.TextColor3=Color3.fromRGB(135,255,115)
+    local h=LP.Character and LP.Character:FindFirstChildOfClass("Humanoid") if h then h.WalkSpeed=50 end
+    if abC then abC:Disconnect() end
+    abC=RS.Heartbeat:Connect(function()
+        if not S.autoBat then return end
+        local tc=S.aTgt and S.aTgt.Character local mc=LP.Character if not tc or not mc then return end
+        local th=tc:FindFirstChild("HumanoidRootPart") local mh=mc:FindFirstChild("HumanoidRootPart")
+        local hum=mc:FindFirstChildOfClass("Humanoid") if not th or not mh or not hum then return end
+        if hum.WalkSpeed~=50 then hum.WalkSpeed=50 end
+        local tool=getEq() if not tool then return end
+        local dist=(mh.Position-th.Position).Magnitude
+        local fp=(th.CFrame*CFrame.new(0,0,-4)).Position
+        if dist>5 then hum:MoveTo(Vector3.new(fp.X,mh.Position.Y,fp.Z))
+        else mh.CFrame=CFrame.lookAt(mh.Position,Vector3.new(th.Position.X,mh.Position.Y,th.Position.Z)) swing(tool,th) end
+    end)
+end)
+
+LP.CharacterAdded:Connect(function(ch)
+    task.wait(1)
+    if S.speed then local h=ch:FindFirstChildOfClass("Humanoid") if h then h.WalkSpeed=150 end end
+    if S.noAnim then disA(ch) end
+    if S.autoBat then local h=ch:FindFirstChildOfClass("Humanoid") if h then h.WalkSpeed=50 end end
+end)
+
+print("[Legend Hub] Premium OK")
