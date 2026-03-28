@@ -9,9 +9,29 @@ local function mkL(p,t,ts,tc,pos,sz,al,fn) local l=Instance.new("TextLabel") l.B
 local function mkInp(p,ph,pos) local b=Instance.new("TextBox") b.Size=UDim2.new(1,-20,0,28) b.Position=pos b.BackgroundColor3=Color3.fromRGB(20,8,42) b.BorderSizePixel=0 b.Text="" b.PlaceholderText=ph b.PlaceholderColor3=Color3.fromRGB(100,60,160) b.TextColor3=Color3.fromRGB(220,185,255) b.TextSize=12 b.Font=Enum.Font.Gotham b.ClearTextOnFocus=false b.Parent=p Instance.new("UICorner",b).CornerRadius=UDim.new(0,8) local s=Instance.new("UIStroke",b) s.Color=Color3.fromRGB(100,40,200) s.Thickness=1 return b end
 
 -- MAIN FRAME
-local M=mkF(sg,Color3.fromRGB(9,4,18),UDim2.new(0,258,0,560),UDim2.new(0.51,0,0.02,0))
-M.Active=true M.Draggable=true
-local msk=Instance.new("UIStroke",M) msk.Color=Color3.fromRGB(130,45,240) msk.Thickness=2
+local msk=Instance.new("UIStroke",M)
+msk.Thickness=2
+
+local grad=Instance.new("UIGradient")
+grad.Parent=msk
+grad.Color=ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(255,255,255)),
+    ColorSequenceKeypoint.new(0.5, Color3.fromRGB(0,0,0)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(255,255,255))
+}
+
+grad.Offset = Vector2.new(-1,0)
+
+-- animação fluida (efeito correndo)
+task.spawn(function()
+    while true do
+        grad.Offset = grad.Offset + Vector2.new(0.02,0)
+        if grad.Offset.X > 1 then
+            grad.Offset = Vector2.new(-1,0)
+        end
+        task.wait(0.02)
+    end
+end)
 
 -- top glow bar
 local glow=mkF(M,Color3.fromRGB(140,50,255),UDim2.new(1,0,0,3),UDim2.new(0,0,0,0),0)
